@@ -32,9 +32,10 @@ void init_players(player *players, int nb_players)
     for (int i = 0; i < nb_players; i++)
     {
         players[i].nbCards = 0;
-        players[i].cards = malloc(MAX_CARDS_PER_PLAYER * sizeof(card));
+        players[i].cards = malloc(MAX_CARDS_PER_PLAYER * sizeof(card)); 
     }
 }
+//ceci est un test
 // distribution des cartes
 void distribute_cards(player *players, card *deck, int nb_players)
 {
