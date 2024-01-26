@@ -1,5 +1,5 @@
-#ifndef DEF_HEADER_HASHMAP
-#define DEF_HEADER_HASHMAP
+#ifndef DEF_HEADER_PLAYER
+#define DEF_HEADER_PLAYER
 
 #include <stdio.h>
 
@@ -10,5 +10,12 @@ struct player{
     int nbCards;
     struct card *cards;
 };
+int choose_nb_players();
+void choose_players_name(player *players, int nb_players);
+void init_players(player *players, int nb_players);
+void distribute_cards(player *players, card *deck, int nb_players);
+void display_cards(player *players, int nb_players);
+card draw_card(card *deck, int *nb_cards_drawn);
 
-#endif // DEF_HEADER_HASHMAP
+
+#endif 

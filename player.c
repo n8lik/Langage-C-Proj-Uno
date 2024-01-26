@@ -31,8 +31,8 @@ void init_players(player *players, int nb_players)
 {
     for (int i = 0; i < nb_players; i++)
     {
-        players[i].nb_cards = 0;
-        players[i].cards = malloc(7 * sizeof(card));
+        players[i].nbCards = 0;
+        players[i].cards = malloc(MAX_CARDS_PER_PLAYER * sizeof(card));
     }
 }
 // distribution des cartes
@@ -43,7 +43,7 @@ void distribute_cards(player *players, card *deck, int nb_players)
         for (int j = 0; j < 7; j++)
         {
             players[i].cards[j] = deck[i * 7 + j];
-            players[i].nb_cards++;
+            players[i].nbCards++;
         }
     }
 }
@@ -53,39 +53,34 @@ void display_cards(player *players, int nb_players)
     for (int i = 0; i < nb_players; i++)
     {
         printf("Joueur %d : %s\n", i + 1, players[i].name);
-        for (int j = 0; j < players[i].nb_cards; j++)
+        for (int j = 0; j < players[i].nbCards; j++)
         {
             printf("Carte %d : Valeur=%s, Couleur=%s, Type=%s\n", j + 1, get_card_name(players[i].cards[j].value), get_color_name(players[i].cards[j].color), get_type_name(players[i].cards[j].type));
         }
+
+        printf("Joueur %d a %d cartes après distribution.\n", i + 1, players[i].nbCards);
     }
 }
+// piocher une carte non déjà distribuée en rajoutant celle qu'on vient de piocher dans les déjà distribuées
+card draw_card(card *deck, int *nb_cards_drawn)
+{
+    printf("Avant la pioche: nb_cards_drawn = %d\n", *nb_cards_drawn);
 
-
-int main() {
-    // Choix du nombre de joueurs
-    int nb_players = choose_nb_players();
-
-    // Création et initialisation des joueurs
-    player *players = malloc(nb_players * sizeof(player));
-    choose_players_name(players, nb_players);
-    init_players(players, nb_players);
-
-    // Création et mélange du jeu de cartes
-    card *deck = create_deck();
-    shuffle_deck(deck, 108);
-
-    // Distribution des cartes
-    distribute_cards(players, deck, nb_players);
-
-    // Affichage des cartes de chaque joueur
-    display_cards(players, nb_players);
-
-    // Libération de la mémoire
-    for (int i = 0; i < nb_players; i++) {
-        free(players[i].cards);
+    if (*nb_cards_drawn >= 108)
+    {
+        printf("Plus de cartes à piocher\n");
+        card no_card;
+        no_card.value = -1; // Valeur spéciale indiquant qu'aucune carte n'a été piochée
+        no_card.color = -1;
+        no_card.type = -1;
+        return no_card;
     }
-    free(players);
-    free(deck);
+    else
+    {
+        card card_drawn = deck[*nb_cards_drawn];
+        *nb_cards_drawn += 1;
+        printf("Après la pioche: nb_cards_drawn = %d\n", *nb_cards_drawn);
 
-    return 0;
+        return card_drawn;
+    }
 }
