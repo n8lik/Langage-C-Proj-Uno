@@ -1,17 +1,15 @@
 CC= gcc
-CFLAGS= -O2 -Wall -Wextra -Werror -ansi
+CFLAGS= -O2 -Wall -Wextra -Werror -ansi -std=gnu11
 CLIBS= -lm
 EXE= executable
 OBJ= main.o\
-     arraylist.o\
-     hashmap.o
+     card.o
 
 $(EXE) : $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(CLIBS)
 
-main.o : main.c player.h card.h
-card.o : arraylist.c arraylist.h
-player.o : hashmap.c hashmap.h 
+main.o : main.c card.h
+card.o : card.c card.h
 
 %.o : %.c
 	$(CC) $(CFLAGS) -c $<
