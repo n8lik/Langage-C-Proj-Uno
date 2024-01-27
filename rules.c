@@ -48,7 +48,7 @@ Color choose_color()
     return color;
 }
 // fonction pour appliquer les effets des cartes spéciales
-void apply_special_card_effect(struct card card, struct player *players, int nb_players, int *current_player, int *direction, int *nb_cards_to_draw, struct card *top_card)
+void apply_special_card_effect(struct card card, struct player *players, int nb_players, int *current_player, int *direction, int *nb_cards_to_draw, struct card *top_card, struct card *deck, int deck_size)
 {
     struct player previous_player; // Pour stocker le joueur précédent
 
@@ -80,13 +80,13 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
         // Faire piocher automatiquement les cartes
         for (int i = 0; i < 4; i++)
         {
-            if (*nb_cards_to_draw < *deck_size && players[*current_player].nbCards < MAX_CARDS_PER_PLAYER)
+            if (*nb_cards_to_draw < deck_size && players[*current_player].nbCards < MAX_CARDS_PER_PLAYER)
             {
                 players[*current_player].cards[players[*current_player].nbCards] = draw_card(deck, nb_cards_to_draw);
                 players[*current_player].nbCards++;
                 printf("Le joueur %s a pioché une carte.\n", players[*current_player].name);
             }
-            else if (*nb_cards_to_draw >= *deck_size)
+            else if (*nb_cards_to_draw >= deck_size)
             {
                 printf("Il n'y a plus de cartes à piocher.\n");
             }
@@ -102,7 +102,7 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
 }
 
 // fonction pour gérer le tour d'un joueur (piocher (avec la fonction card draw_card(card *deck, int *nb_cards_drawn) du player.c), jouer, appliquer les effets des cartes spéciales)
-void play_turn(player *players, int nb_players, card *deck, int *deck_size, int *nb_cards_drawn, int *current_player, int *direction, int *nb_cards_to_draw, card *top_card)
+void play_turn(player *players, int nb_players, card *deck, int deck_size, int *nb_cards_drawn, int *current_player, int *direction, int *nb_cards_to_draw, card *top_card)
 {
     // Afficher la carte du dessus
     printf("\n\nCarte du dessus : Valeur=%s, Couleur=%s, Type=%s\n", get_card_name(top_card->value), get_color_name(top_card->color), get_type_name(top_card->type));
@@ -125,7 +125,7 @@ void play_turn(player *players, int nb_players, card *deck, int *deck_size, int 
         if (players[*current_player].nbCards < MAX_CARDS_PER_PLAYER)
         {
             // Assurez-vous que le joueur a de la place dans sa main
-            if (*nb_cards_drawn < *deck_size)
+            if (*nb_cards_drawn < deck_size)
             {
                 players[*current_player].cards[players[*current_player].nbCards] = draw_card(deck, nb_cards_drawn);
                 players[*current_player].nbCards++;
@@ -150,7 +150,7 @@ void play_turn(player *players, int nb_players, card *deck, int *deck_size, int 
         if (can_be_played(players[*current_player].cards[card_index], *top_card))
         {
             // Appliquer les effets de la carte
-            apply_special_card_effect(players[*current_player].cards[card_index], players, nb_players, current_player, direction, nb_cards_to_draw, top_card);
+            apply_special_card_effect(players[*current_player].cards[card_index], players, nb_players, current_player, direction, nb_cards_to_draw, top_card, deck, deck_size);
 
             // Mettre la carte sur le dessus de la pile
             *top_card = players[*current_player].cards[card_index];

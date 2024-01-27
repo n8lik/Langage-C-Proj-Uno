@@ -5,7 +5,8 @@
 #include "player.h"
 #include "rules.h"
 
-int main() {
+int main()
+{
     // Initialisation du jeu
     int nb_players = choose_nb_players();
     player *players = malloc(nb_players * sizeof(player));
@@ -14,7 +15,7 @@ int main() {
 
     // Déclaration et initialisation des variables
     int current_player = 0; // ou choisir un joueur au hasard
-    int direction = 1; // 1 pour sens horaire, -1 pour sens antihoraire
+    int direction = 1;      // 1 pour sens horaire, -1 pour sens antihoraire
     int nb_cards_to_draw = 0;
 
     // Déclaration et initialisation de la variable top_card
@@ -23,7 +24,7 @@ int main() {
     // Création et mélange du deck
     card *deck = create_deck();
     shuffle_deck(deck, 108);
-    
+
     // Taille actuelle du deck sans les autres cartes
     int deck_size = 108 - nb_players * 7 - 1;
 
@@ -31,11 +32,13 @@ int main() {
     display_cards(players, nb_players);
 
     // Boucle du jeu
-    while (1) {
-        play_turn(players, nb_players, deck, &deck_size, &nb_cards_to_draw, &current_player, &direction, &nb_cards_to_draw, &top_card);
+    while (1)
+    {
+        play_turn(players, nb_players, deck, deck_size, &nb_cards_to_draw, &current_player, &direction, &nb_cards_to_draw, &top_card);
 
         // Vérifier si le joueur actuel a gagné
-        if (has_won(players[current_player])) {
+        if (has_won(players[current_player]))
+        {
             printf("%s a gagné!\n", players[current_player].name);
             break;
         }
@@ -49,7 +52,8 @@ int main() {
 
     // Libération de la mémoire
     free(deck);
-    for (int i = 0; i < nb_players; i++) {
+    for (int i = 0; i < nb_players; i++)
+    {
         free(players[i].cards);
     }
     free(players);
