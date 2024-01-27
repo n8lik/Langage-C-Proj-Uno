@@ -23,7 +23,7 @@ int main()
 
     // Création et mélange du deck
     card *deck = create_deck();
-    shuffle_deck(deck, 108);
+    shuffle_deck(deck, 108, &top_card);
 
     // Taille actuelle du deck sans les autres cartes
     int deck_size = 108 - nb_players * 7 - 1;

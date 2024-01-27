@@ -13,7 +13,7 @@ int can_be_played(struct card card, struct card top_card)
     {
         return 1;
     }
-    else if (card.value == top_card.value || card.color == top_card.color || card.type == top_card.type)
+    if (card.value == top_card.value || card.color == top_card.color)
     {
         return 1;
     }
@@ -51,11 +51,25 @@ Color choose_color()
 void apply_special_card_effect(struct card card, struct player *players, int nb_players, int *current_player, int *direction, int *nb_cards_to_draw, struct card *top_card, struct card *deck, int deck_size)
 {
     struct player previous_player; // Pour stocker le joueur précédent
+    int next_player = (*current_player + *direction + nb_players) % nb_players;
 
     switch (card.type)
     {
     case deux:
         *nb_cards_to_draw += 2;
+        if (players[next_player].nbCards < MAX_CARDS_PER_PLAYER && deck_size > 0)
+        {
+            players[next_player].cards[players[next_player].nbCards] = draw_card(deck, &deck_size); // Si deck_size est un int et vous changez la signature de draw_card
+            players[next_player].nbCards++;
+        }
+        else
+        {
+            printf("Le joueur %s a atteint le nombre maximum de cartes ou le deck est vide.\n", players[next_player].name);
+        }
+
+        *current_player = next_player;
+        *nb_cards_to_draw = 0;
+
         break;
     case sens:
         *direction *= -1;
@@ -76,25 +90,19 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
         break;
     case quatre:
         *nb_cards_to_draw += 4;
-
-        // Faire piocher automatiquement les cartes
-        for (int i = 0; i < 4; i++)
+        if (players[next_player].nbCards < MAX_CARDS_PER_PLAYER && deck_size > 0)
         {
-            if (*nb_cards_to_draw < deck_size && players[*current_player].nbCards < MAX_CARDS_PER_PLAYER)
-            {
-                players[*current_player].cards[players[*current_player].nbCards] = draw_card(deck, nb_cards_to_draw);
-                players[*current_player].nbCards++;
-                printf("Le joueur %s a pioché une carte.\n", players[*current_player].name);
-            }
-            else if (*nb_cards_to_draw >= deck_size)
-            {
-                printf("Il n'y a plus de cartes à piocher.\n");
-            }
-            else
-            {
-                printf("Le joueur %s a atteint le nombre maximum de cartes.\n", players[*current_player].name);
-            }
+            players[next_player].cards[players[next_player].nbCards] = draw_card(deck, &deck_size); // Si deck_size est un int et vous changez la signature de draw_card
+            players[next_player].nbCards++;
         }
+        else
+        {
+            printf("Le joueur %s a atteint le nombre maximum de cartes ou le deck est vide.\n", players[next_player].name);
+        }
+
+        *current_player = next_player;
+        *nb_cards_to_draw = 0;
+
         break;
     default:
         break;
@@ -130,6 +138,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
                 players[*current_player].cards[players[*current_player].nbCards] = draw_card(deck, nb_cards_drawn);
                 players[*current_player].nbCards++;
                 printf("Vous avez pioché une carte.\n");
+                play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card);
             }
             else
             {
@@ -165,6 +174,8 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
         else
         {
             printf("Vous ne pouvez pas jouer cette carte.\n");
+            // rejouer le tour
+            play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card);
         }
     }
     else

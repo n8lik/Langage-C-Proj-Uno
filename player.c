@@ -63,23 +63,27 @@ void display_cards(player *players, int nb_players)
     }
 }
 // piocher une carte non déjà distribuée en rajoutant celle qu'on vient de piocher dans les déjà distribuées
-card draw_card(card *deck, int *nb_cards_drawn)
-{
+card draw_card(card *deck, int *nb_cards_drawn) {
     printf("Avant la pioche: nb_cards_drawn = %d\n", *nb_cards_drawn);
 
-    if (*nb_cards_drawn >= 108)
-    {
+    if (*nb_cards_drawn >= 108) {
         printf("Plus de cartes à piocher\n");
         card no_card;
-        no_card.value = -1; // Valeur spéciale indiquant qu'aucune carte n'a été piochée
+        no_card.value = -1;
         no_card.color = -1;
         no_card.type = -1;
         return no_card;
-    }
-    else
-    {
+    } else {
         card card_drawn = deck[*nb_cards_drawn];
-        *nb_cards_drawn += 1;
+        
+        // Décaler toutes les cartes suivantes d'une position vers l'avant
+        for (int i = *nb_cards_drawn; i < 107; i++) {
+            deck[i] = deck[i + 1];
+        }
+
+        // Réduire le nombre total de cartes dans le deck
+        (*nb_cards_drawn)++;
+
         printf("Après la pioche: nb_cards_drawn = %d\n", *nb_cards_drawn);
 
         return card_drawn;

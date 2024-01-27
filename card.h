@@ -38,7 +38,6 @@ const char* get_card_name(int value);
 const char* get_color_name(Color c);
 const char* get_type_name(Type t);
 card *create_deck(); 
-void shuffle_deck(card *deck, int deck_size);
-card draw_card(card *deck, int *deck_size);
+void shuffle_deck(card *deck, int deck_size, card *top_card);
 
 #endif 

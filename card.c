@@ -117,7 +117,7 @@ card *create_deck()
     return deck;
 }
 
-void shuffle_deck(card *deck, int deck_size)
+void shuffle_deck(card *deck, int deck_size, card *top_card)
 {
     srand(time(NULL)); // Initialisation du générateur de nombres aléatoires
 
@@ -130,6 +130,7 @@ void shuffle_deck(card *deck, int deck_size)
         deck[i] = deck[j];
         deck[j] = temp;
     }
-        printf("Deck mélangé.\n");
-
+    // carte du dessus = aléatoire
+    *top_card = deck[rand() % deck_size];
+    printf("Deck mélangé.\n");
 }
