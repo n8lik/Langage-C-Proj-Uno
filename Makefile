@@ -1,19 +1,23 @@
 CC= gcc
-CFLAGS= -O2 -Wall -Wextra -Werror -ansi -std=gnu11
+CFLAGS= -O2 -Wall -Wextra -Werror -std=c99
 CLIBS= -lm
 EXE= executable
-OBJ= main.o\
-     card.o
+OBJ= obj/
+FILEC:= $(wildcard *.c)
+FILEH:= $(wildcard *.h)
+FILEO:= $(patsubst %.c,$(OBJ)%.o,$(FILEC))
 
-$(EXE) : $(OBJ)
+all: $(OBJ) $(EXE)
+
+$(OBJ):
+	mkdir -p $(OBJ)
+
+$(EXE) : $(FILEO)
 	$(CC) $(CFLAGS) -o $@ $^ $(CLIBS)
 
-main.o : main.c card.h
-card.o : card.c card.h
-
-%.o : %.c
-	$(CC) $(CFLAGS) -c $<
+$(OBJ)%.o : %.c $(FILEH)
+	$(CC) $(CFLAGS) -o $@ -c $<
 
 clean :
-	rm -rf $(OBJ)
+	rm -rf $(OBJ)*.o
 	rm -rf $(EXE)
