@@ -2,6 +2,7 @@
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
 #include <stdbool.h>
+#include "home.h"
 
 int home_page(int argc, char *argv[])
 {

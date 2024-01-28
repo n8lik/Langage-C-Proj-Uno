@@ -5,8 +5,10 @@
 // sdl 1.2
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
+#include "board.h"
 
-int main(int argc, char *argv[])
+int board(int argc, char *argv[])
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
