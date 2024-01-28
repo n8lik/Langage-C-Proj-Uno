@@ -3,7 +3,7 @@
 #include <SDL/SDL_ttf.h>
 #include <stdbool.h>
 
-int main(int argc, char *argv[])
+int home_page(int argc, char *argv[])
 {
     // Initialisation de SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0)

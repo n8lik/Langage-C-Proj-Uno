@@ -2,6 +2,8 @@
     "files.associations": {
         "type_traits": "c",
         "card.h": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "sdl_image.h": "c",
+        "stdbool.h": "c"
     }
 }
