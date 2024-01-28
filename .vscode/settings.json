@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "type_traits": "c",
-        "card.h": "c"
+        "card.h": "c",
+        "cstdlib": "c"
     }
 }

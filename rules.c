@@ -187,7 +187,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
 // Fonction pour calculer les scores et les garder dans un fichier nommé score.txt
 void calculate_scores(player *players, int nb_players)
 {
-    FILE *score_file = fopen("score.txt", "w");
+    FILE *score_file = fopen("result/score.txt", "w");
     if (score_file == NULL)
     {
         printf("Erreur lors de l'ouverture du fichier score.txt\n");
