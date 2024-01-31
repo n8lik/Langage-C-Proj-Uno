@@ -1,10 +1,19 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
+#include <SDL/SDL_gfxPrimitives.h>
 #include <stdbool.h>
 #include "home.h"
 
-int home_page(int argc, char *argv[])
+void drawTriangle(SDL_Surface *screen, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3)
+{
+    // Dessiner le triangle
+    lineRGBA(screen, x1, y1, x2, y2, 255, 255, 255, 255); // Ligne de base
+    lineRGBA(screen, x2, y2, x3, y3, 255, 255, 255, 255); // Ligne de droite
+    lineRGBA(screen, x1, y1, x3, y3, 255, 255, 255, 255); // Ligne de gauche
+}
+
+int main(int argc, char *argv[])
 {
     // Initialisation de SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -104,11 +113,11 @@ int home_page(int argc, char *argv[])
         return 1;
     }
     int x_position3 = 950; // par exemple, 100 pixels depuis la gauche de l'écran
-    int y_position3 = 463;  // par exemple, 100 pixels depuis le haut de l'écran
+    int y_position3 = 463; // par exemple, 100 pixels depuis le haut de l'écran
     // Position du texte sur l'écran
     SDL_Rect textPositionanarchie = {x_position3, y_position3, 0, 0};
     SDL_BlitSurface(textSurfaceanarchie, NULL, screen, &textPositionanarchie);
-    
+
     // Création du texte QUITTER en haut a droite
 
     SDL_Surface *textSurfacequitter = TTF_RenderText_Solid(font, "QUITTER", textColor);
@@ -122,12 +131,12 @@ int home_page(int argc, char *argv[])
         return 1;
     }
     int x_position4 = 20; // par exemple, 100 pixels depuis la gauche de l'écran
-    int y_position4 = 10;  // par exemple, 100 pixels depuis le haut de l'écran
+    int y_position4 = 10; // par exemple, 100 pixels depuis le haut de l'écran
     // Position du texte sur l'écran
     SDL_Rect textPositionquitter = {x_position4, y_position4, 0, 0};
     SDL_BlitSurface(textSurfacequitter, NULL, screen, &textPositionquitter);
 
-// IMAGE des paramètres en bas à droite
+    // IMAGE des paramètres en bas à droite
     SDL_Surface *parametre = IMG_Load("assets/parametre.jpg");
     if (!parametre)
     {
@@ -144,7 +153,7 @@ int home_page(int argc, char *argv[])
     SDL_Rect parametrepos = {x_position5, y_position5, 0, 0};
     SDL_BlitSurface(parametre, NULL, screen, &parametrepos);
 
-    //shop au milieu à gauche  
+    // shop au milieu à gauche
     SDL_Surface *shop = IMG_Load("assets/shop.jpg");
     if (!shop)
     {
@@ -155,16 +164,18 @@ int home_page(int argc, char *argv[])
         SDL_Quit();
         return 1;
     }
-    int x_position6 = 20; // par exemple, 100 pixels depuis la gauche de l'écran
-    int y_position6 = 200;  // par exemple, 100 pixels depuis le haut de l'écran
+    int x_position6 = 20;  // par exemple, 100 pixels depuis la gauche de l'écran
+    int y_position6 = 300; // par exemple, 100 pixels depuis le haut de l'écran
+
     // Position du texte sur l'écran
     SDL_Rect shoppos = {x_position6, y_position6, 0, 0};
-    SDL_BlitSurface(shop, NULL, screen, &shoppos);
 
+    SDL_BlitSurface(shop, NULL, screen, &shoppos);
 
     // Actualisation de l'écran
     SDL_Flip(screen);
-
+    drawTriangle(screen, 15, 200, 15, 475, 260, 340);
+    SDL_Flip(screen);
     // Boucle principale
     bool running = true;
     SDL_Event event;
