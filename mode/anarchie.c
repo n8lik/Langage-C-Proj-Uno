@@ -6,13 +6,13 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
-#include "card.h"
-#include "player.h"
-#include "rules.h"
-#include "board.h"
-#include "home.h"
+#include "../card.h"
+#include "../player.h"
+#include "../rules.h"
+#include "../home.h"
+#include "anarchie.h"
 
-int board (int mode)
+int anarchie ()
 {
     // Initialisation du jeu avec le nombre de joueurs et leurs nomss
     int nb_players = choose_nb_players();
@@ -53,13 +53,6 @@ int board (int mode)
 
     SDL_BlitSurface(bgImage, NULL, screen, NULL);
     SDL_Flip(screen);
-
-       
-    
-    if (mode == 1)
-    {
-    }
-
 
 
     SDL_Event event;

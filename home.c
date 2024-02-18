@@ -4,7 +4,9 @@
 #include <SDL/SDL_gfxPrimitives.h>
 #include <stdbool.h>
 #include "home.h"
-#include "board.h"
+#include "mode/solo.h"
+#include "mode/multi.h"
+#include "mode/anarchie.h"
 
 void drawTriangle(SDL_Surface *screen, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3)
 {
@@ -202,23 +204,23 @@ int home_page()
                     // Vérifier si le clic est sur le bouton "SOLO"
                     if (x >= x_position && x <= x_position + textSurfacesolo->w && y >= y_position && y <= y_position + textSurfacesolo->h)
                     {
-                        //Appeler la fonction board
-                        board(0);
+                        //Appeler la fonction solo
+                        solo();
                         
                     }
 
                     // Vérifier si le clic est sur le bouton "MULTI"
                     if (x >= x_position2 && x <= x_position2 + textSurfacemulti->w && y >= y_position2 && y <= y_position2 + textSurfacemulti->h)
                     {
-                        //Appeler la fonction board
-                        board(1);
+                        //Appeler la fonction multi
+                        multi();
                     }
 
                     // Vérifier si le clic est sur le bouton "ANARCHIE"
                     if (x >= x_position3 && x <= x_position3 + textSurfaceanarchie->w && y >= y_position3 && y <= y_position3 + textSurfaceanarchie->h)
                     {
-                        //Appeler la fonction board
-                        board(2);
+                        //Appeler la fonction anarchie
+                        anarchie();
                     }   
                 }
                 break;
