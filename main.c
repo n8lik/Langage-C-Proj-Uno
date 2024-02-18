@@ -8,6 +8,7 @@
 
 int main()
 {
+    
     home_page();
     // Initialisation du jeu
     int nb_players = choose_nb_players();

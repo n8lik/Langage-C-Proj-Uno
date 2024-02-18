@@ -55,6 +55,14 @@ int multi ()
     SDL_Flip(screen);
 
 
+
+
+    //Code pour le jeu
+    //Initialisation des cartes
+    init_players(players, nb_players);
+    
+
+
     SDL_Event event;
     bool running = true;
     while (running)
@@ -67,7 +75,6 @@ int multi ()
             }
         }
     }
-
 
     SDL_FreeSurface(bgImage);
     IMG_Quit();

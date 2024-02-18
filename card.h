@@ -32,6 +32,7 @@ struct card{
     Color color;
     Type type;
     int top_card;
+    char img[8];
 };
 
 const char* get_card_name(int value);
