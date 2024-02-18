@@ -66,6 +66,21 @@ const char *get_type_name(Type t)
     }
 }
 
+void set_card_index(card *c) {
+    char colorPrefix = ' '; // Placeholder pour la première lettre de la couleur
+    switch (c->color) {
+        case RED: colorPrefix = 'r'; break;
+        case BLUE: colorPrefix = 'b'; break;
+        case GREEN: colorPrefix = 'v'; break; // 'v' pour "vert"
+        case YELLOW: colorPrefix = 'j'; break; // 'j' pour "jaune"
+        case BLACK: colorPrefix = 'n'; break; // 'n' pour "noir"
+        default: colorPrefix = 'i'; // 'i' pour "inconnu"
+    }
+    // Ajouter l'extension .png à l'index
+    sprintf(c->img, "%c%d.png", colorPrefix, c->value);
+}
+
+
 card *create_deck()
 {
     card *deck = malloc(108 * sizeof(card));
@@ -82,6 +97,7 @@ card *create_deck()
                 deck[index].value = i;
                 deck[index].color = c;
                 deck[index].type = NORMAL;
+                set_card_index(&deck[index]);
                 index++;
             }
         }
@@ -97,6 +113,7 @@ card *create_deck()
                 deck[index].value = i;
                 deck[index].color = c;
                 deck[index].type = i - 9;
+                set_card_index(&deck[index]);
                 index++;
             }
         }
@@ -110,6 +127,7 @@ card *create_deck()
             deck[index].value = i;
             deck[index].color = BLACK;
             deck[index].type = i - 9;
+            set_card_index(&deck[index]);
             index++;
         }
     }

@@ -54,7 +54,6 @@ int solo ()
     SDL_BlitSurface(bgImage, NULL, screen, NULL);
     SDL_Flip(screen);
 
-
     SDL_Event event;
     bool running = true;
     while (running)
@@ -67,7 +66,6 @@ int solo ()
             }
         }
     }
-
 
     SDL_FreeSurface(bgImage);
     IMG_Quit();

@@ -226,6 +226,14 @@ void display_cards(player *players, int nb_players)
         printf("Joueur %d a %d cartes après distribution.\n", i + 1, players[i].nbCards);
     }
 }
+
+void display_deck(card *deck, int deck_size) {
+    // Afficher le deck avec toutes ces caraaactéristiques, couleur, type, valeur, image
+    for (int i = 0; i < deck_size; i++) {
+        printf("Carte %d : Valeur=%s, Couleur=%s, Type=%s, Image=%s\n", i + 1, get_card_name(deck[i].value), get_color_name(deck[i].color), get_type_name(deck[i].type), deck[i].img);
+    }
+}
+
 // piocher une carte non déjà distribuée en rajoutant celle qu'on vient de piocher dans les déjà distribuées
 card draw_card(card *deck, int *nb_cards_drawn) {
     printf("Avant la pioche: nb_cards_drawn = %d\n", *nb_cards_drawn);
