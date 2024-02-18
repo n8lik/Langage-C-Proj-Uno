@@ -5,7 +5,8 @@
 #include <SDL/SDL_ttf.h>
 #include <stdbool.h>
 
-int home_page(int argc, char *argv[]);
+void drawTriangle(SDL_Surface *screen, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3);
+int home_page();
 
 
 #endif

@@ -1,11 +1,13 @@
 CC= gcc
 CFLAGS= -O2 -Wall -Wextra -Werror -std=c99
-CLIBS= -lm
+CLIBS= -lm -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx
 EXE= executable
 OBJ= obj/
-FILEC:= $(wildcard *.c)
-FILEH:= $(wildcard *.h)
-FILEO:= $(patsubst %.c,$(OBJ)%.o,$(FILEC))
+SRC_DIR = .
+MODE_DIR = mode
+FILEC:= $(wildcard $(SRC_DIR)/*.c) $(wildcard $(MODE_DIR)/*.c)
+FILEH:= $(wildcard $(SRC_DIR)/*.h) $(wildcard $(MODE_DIR)/*.h)
+FILEO:= $(patsubst %.c,$(OBJ)%.o,$(notdir $(FILEC)))
 
 all: $(OBJ) $(EXE)
 
@@ -15,7 +17,10 @@ $(OBJ):
 $(EXE) : $(FILEO)
 	$(CC) $(CFLAGS) -o $@ $^ $(CLIBS)
 
-$(OBJ)%.o : %.c $(FILEH)
+$(OBJ)%.o : $(SRC_DIR)/%.c $(FILEH)
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(OBJ)%.o : $(MODE_DIR)/%.c $(FILEH)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 clean :

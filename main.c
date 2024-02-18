@@ -4,11 +4,11 @@
 #include "card.h"
 #include "player.h"
 #include "rules.h"
-#include "board.h"
 #include "home.h"
 
 int main()
 {
+    home_page();
     // Initialisation du jeu
     int nb_players = choose_nb_players();
     player *players = malloc(nb_players * sizeof(player));
