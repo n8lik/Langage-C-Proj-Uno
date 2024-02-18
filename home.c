@@ -189,6 +189,31 @@ int main(int argc, char *argv[])
                 running = false;
                 break;
                 // Ajouter ici la gestion des interactions avec les boutons
+
+            
+            // Quand on clic droit
+             case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                    int x = event.button.x;
+                    int y = event.button.y;
+
+                    // Vérifier si le clic est sur le bouton "SOLO"
+                    if (x >= x_position && x <= x_position + textSurfacesolo->w &&
+                        y >= y_position && y <= y_position + textSurfacesolo->h)
+                    {
+                        // Compiler "board.c"
+                        int compile_result = system("gcc -o board board.c -lSDL -lSDL_image -lSDL_ttf");
+                        if (compile_result == 0) {
+                            // Exécuter "board"
+                            system("./executable");
+                        } else {
+                            fprintf(stderr, "La compilation de board.c a échoué.\n");
+                        }
+                        
+                    }
+                }
+                break;
             }
         }
     }
