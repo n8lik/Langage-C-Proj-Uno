@@ -2,6 +2,6 @@
 #define DEF_HEADER_BOARD
 
 
-int board();
+int board(int mode);
 
 #endif

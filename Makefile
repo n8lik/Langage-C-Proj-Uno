@@ -1,6 +1,6 @@
 CC= gcc
 CFLAGS= -O2 -Wall -Wextra -Werror -std=c99
-CLIBS= -lm
+CLIBS= -lm -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx
 EXE= executable
 OBJ= obj/
 FILEC:= $(wildcard *.c)
