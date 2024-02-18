@@ -10,7 +10,7 @@ int main()
 {
     
     home_page();
-    // Initialisation du jeu
+   /* // Initialisation du jeu
     int nb_players = choose_nb_players();
     player *players = malloc(nb_players * sizeof(player));
     choose_players_name(players, nb_players);
@@ -61,5 +61,5 @@ int main()
     }
     free(players);
 
-    return 0;
+    return 0;*/
 }

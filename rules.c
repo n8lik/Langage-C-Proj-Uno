@@ -1,6 +1,9 @@
 #include "card.h"
 #include "player.h"
 #include "rules.h"
+#include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
 
 // fonction pour vérifier si une carte peut être posée
 int can_be_played(struct card card, struct card top_card)
@@ -110,16 +113,84 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
 }
 
 // fonction pour gérer le tour d'un joueur (piocher (avec la fonction card draw_card(card *deck, int *nb_cards_drawn) du player.c), jouer, appliquer les effets des cartes spéciales)
-void play_turn(player *players, int nb_players, card *deck, int deck_size, int *nb_cards_drawn, int *current_player, int *direction, int *nb_cards_to_draw, card *top_card)
+void play_turn(player *players, int nb_players, card *deck, int deck_size, int *nb_cards_drawn, int *current_player, int *direction, int *nb_cards_to_draw, card *top_card, SDL_Surface *screen)
 {
-    // Afficher la carte du dessus
+    //Afficher la carte du dessus
     printf("\n\nCarte du dessus : Valeur=%s, Couleur=%s, Type=%s\n", get_card_name(top_card->value), get_color_name(top_card->color), get_type_name(top_card->type));
+
+
+    // Construire le chemin complet vers l'image de la carte
+    char imagePath[256]; // Assurez-vous que ce tableau est assez grand
+    sprintf(imagePath, "assets/cards/%s", top_card->img);
+
+    // Charger l'image de la carte du dessus
+    SDL_Surface *topCardImage = IMG_Load(imagePath);
+    if (!topCardImage) {
+        fprintf(stderr, "Impossible de charger l'image de la carte : %s\n", IMG_GetError());
+        // Gérer l'erreur (par exemple, continuer sans crasher)
+    } else {
+        SDL_Rect topCardPos;
+        topCardPos.x = 500; // Position x où afficher la carte
+        topCardPos.y = 300; // Position y où afficher la carte
+
+        SDL_BlitSurface(topCardImage, NULL, screen, &topCardPos);
+        SDL_Flip(screen); // Met à jour l'écran avec la nouvelle image affichée
+
+        SDL_FreeSurface(topCardImage); // Libère la mémoire de l'image chargée une fois affichée
+    }
+
+    //Afficher le nom du joueur actuel en SDL
+    TTF_Font *font = TTF_OpenFont("assets/DUSTERY.ttf", 24);
+    if (font == NULL)
+    {
+        fprintf(stderr, "Erreur lors du chargement de la police : %s\n", TTF_GetError());
+        // Gérer l'erreur (par exemple, continuer sans crasher)
+    }
+    SDL_Color textColor = {255, 255, 255,0};
+    SDL_Surface *text = TTF_RenderText_Solid(font, players[*current_player].name, textColor);
+    if (text == NULL)
+    {
+        fprintf(stderr, "Erreur lors du rendu du texte : %s\n", TTF_GetError());
+        // Gérer l'erreur (par exemple, continuer sans crasher)
+    }
+    SDL_Rect textPos;
+    textPos.x = 500; // Position x où afficher le texte
+    textPos.y = 50; // Position y où afficher le texte
+    SDL_BlitSurface(text, NULL, screen, &textPos);
+    SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
+    TTF_CloseFont(font); // Libère la mémoire de la police une fois utilisée
+    SDL_FreeSurface(text); // Libère la mémoire du texte une fois affiché
+
 
     // Afficher les cartes du joueur
     printf("%s Vos cartes :\n", players[*current_player].name);
     for (int i = 0; i < players[*current_player].nbCards; i++)
     {
         printf("Carte %d : Valeur=%s, Couleur=%s, Type=%s\n", i + 1, get_card_name(players[*current_player].cards[i].value), get_color_name(players[*current_player].cards[i].color), get_type_name(players[*current_player].cards[i].type));
+    }
+
+    // Afficher les cartes du joueur avec des images
+    for (int i = 0; i < players[*current_player].nbCards; i++)
+    {
+        // Construire le chemin complet vers l'image de la carte
+        char imagePath[256]; // Assurez-vous que ce tableau est assez grand
+        sprintf(imagePath, "assets/cards/%s", players[*current_player].cards[i].img);
+
+        // Charger l'image de la carte
+        SDL_Surface *cardImage = IMG_Load(imagePath);
+        if (!cardImage) {
+            fprintf(stderr, "Impossible de charger l'image de la carte : %s\n", IMG_GetError());
+            // Gérer l'erreur (par exemple, continuer sans crasher)
+        } else {
+            SDL_Rect cardPos;
+            cardPos.x = 350 + i * 100; // Position x où afficher la carte
+            cardPos.y = 500; // Position y où afficher la carte
+
+            SDL_BlitSurface(cardImage, NULL, screen, &cardPos);
+            SDL_Flip(screen); // Met à jour l'écran avec la nouvelle image affichée
+
+            SDL_FreeSurface(cardImage); // Libère la mémoire de l'image chargée une fois affichée
+        }
     }
 
     // Demander au joueur quelle carte il veut jouer
@@ -138,7 +209,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
                 players[*current_player].cards[players[*current_player].nbCards] = draw_card(deck, nb_cards_drawn);
                 players[*current_player].nbCards++;
                 printf("Vous avez pioché une carte.\n");
-                play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card);
+                play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen);
             }
             else
             {
@@ -175,13 +246,14 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
         {
             printf("Vous ne pouvez pas jouer cette carte.\n");
             // rejouer le tour
-            play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card);
+            play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen);
         }
     }
     else
     {
         printf("Choix non valide. Veuillez réessayer.\n");
     }
+
 }
 
 // Fonction pour calculer les scores et les garder dans un fichier nommé score.txt
