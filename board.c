@@ -6,10 +6,19 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
+#include "card.h"
+#include "player.h"
+#include "rules.h"
 #include "board.h"
+#include "home.h"
 
-int board(int argc, char *argv[])
+int board (int mode)
 {
+    // Initialisation du jeu avec le nombre de joueurs et leurs nomss
+    int nb_players = choose_nb_players();
+    player *players = malloc(nb_players * sizeof(player));
+    choose_players_name(players, nb_players);
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         fprintf(stderr, "Erreur lors de l'initialisation de SDL : %s\n", SDL_GetError());
@@ -33,7 +42,7 @@ int board(int argc, char *argv[])
         return 1;
     }
 
-    SDL_Surface *bgImage = IMG_Load("backboard.jpg");
+    SDL_Surface *bgImage = IMG_Load("assets/backboard.jpg");
     if (bgImage == NULL)
     {
         fprintf(stderr, "Erreur lors du chargement de l'image : %s\n", IMG_GetError());
@@ -44,6 +53,14 @@ int board(int argc, char *argv[])
 
     SDL_BlitSurface(bgImage, NULL, screen, NULL);
     SDL_Flip(screen);
+
+       
+    
+    if (mode == 1)
+    {
+    }
+
+
 
     SDL_Event event;
     bool running = true;
@@ -58,7 +75,9 @@ int board(int argc, char *argv[])
         }
     }
 
+
     SDL_FreeSurface(bgImage);
     IMG_Quit();
     SDL_Quit();
+    return 0;
 }

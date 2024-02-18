@@ -4,6 +4,7 @@
 #include <SDL/SDL_gfxPrimitives.h>
 #include <stdbool.h>
 #include "home.h"
+#include "board.h"
 
 void drawTriangle(SDL_Surface *screen, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3)
 {
@@ -13,7 +14,7 @@ void drawTriangle(SDL_Surface *screen, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y
     lineRGBA(screen, x1, y1, x3, y3, 255, 255, 255, 255); // Ligne de gauche
 }
 
-int main(int argc, char *argv[])
+int home_page()
 {
     // Initialisation de SDL
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
     }
 
     // Couleur du texte
-    SDL_Color textColor = {255, 255, 255};
+    SDL_Color textColor = {255, 255, 255,0};
 
     // Création du texte SOLO
     SDL_Surface *textSurfacesolo = TTF_RenderText_Solid(font, "SOLO", textColor);
@@ -189,6 +190,38 @@ int main(int argc, char *argv[])
                 running = false;
                 break;
                 // Ajouter ici la gestion des interactions avec les boutons
+
+            
+            // Quand on clic droit
+             case SDL_MOUSEBUTTONDOWN:
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                    int x = event.button.x;
+                    int y = event.button.y;
+
+                    // Vérifier si le clic est sur le bouton "SOLO"
+                    if (x >= x_position && x <= x_position + textSurfacesolo->w && y >= y_position && y <= y_position + textSurfacesolo->h)
+                    {
+                        //Appeler la fonction board
+                        board(0);
+                        
+                    }
+
+                    // Vérifier si le clic est sur le bouton "MULTI"
+                    if (x >= x_position2 && x <= x_position2 + textSurfacemulti->w && y >= y_position2 && y <= y_position2 + textSurfacemulti->h)
+                    {
+                        //Appeler la fonction board
+                        board(1);
+                    }
+
+                    // Vérifier si le clic est sur le bouton "ANARCHIE"
+                    if (x >= x_position3 && x <= x_position3 + textSurfaceanarchie->w && y >= y_position3 && y <= y_position3 + textSurfaceanarchie->h)
+                    {
+                        //Appeler la fonction board
+                        board(2);
+                    }   
+                }
+                break;
             }
         }
     }
