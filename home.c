@@ -4,6 +4,7 @@
 #include <SDL/SDL_gfxPrimitives.h>
 #include <stdbool.h>
 #include "home.h"
+#include "board.h"
 
 void drawTriangle(SDL_Surface *screen, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3)
 {
@@ -199,17 +200,10 @@ int main(int argc, char *argv[])
                     int y = event.button.y;
 
                     // Vérifier si le clic est sur le bouton "SOLO"
-                    if (x >= x_position && x <= x_position + textSurfacesolo->w &&
-                        y >= y_position && y <= y_position + textSurfacesolo->h)
+                    if (x >= x_position && x <= x_position + textSurfacesolo->w && y >= y_position && y <= y_position + textSurfacesolo->h)
                     {
-                        // Compiler "board.c"
-                        int compile_result = system("gcc -o board board.c -lSDL -lSDL_image -lSDL_ttf");
-                        if (compile_result == 0) {
-                            // Exécuter "board"
-                            system("./executable");
-                        } else {
-                            fprintf(stderr, "La compilation de board.c a échoué.\n");
-                        }
+                        //Appeler la fonction board
+                        board();
                         
                     }
                 }

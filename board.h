@@ -2,6 +2,6 @@
 #define DEF_HEADER_BOARD
 
 
-int board(int argc, char *argv[]);
+int board();
 
 #endif

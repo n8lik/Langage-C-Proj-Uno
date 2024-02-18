@@ -8,7 +8,7 @@
 #include <SDL/SDL_ttf.h>
 #include "board.h"
 
-int board(int argc, char *argv[])
+int board()
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -33,7 +33,7 @@ int board(int argc, char *argv[])
         return 1;
     }
 
-    SDL_Surface *bgImage = IMG_Load("backboard.jpg");
+    SDL_Surface *bgImage = IMG_Load("assets/backboard.jpg");
     if (bgImage == NULL)
     {
         fprintf(stderr, "Erreur lors du chargement de l'image : %s\n", IMG_GetError());
