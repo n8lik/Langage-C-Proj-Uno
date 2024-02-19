@@ -81,7 +81,7 @@ int multi ()
     // Boucle du jeu
     while (1)
     {
-        play_turn(players, nb_players, deck, deck_size, &nb_cards_to_draw, &current_player, &direction, &nb_cards_to_draw, &top_card, screen);
+        play_turn(players, nb_players, deck, deck_size, &nb_cards_to_draw, &current_player, &direction, &nb_cards_to_draw, &top_card, screen, bgImage);
 
         // Vérifier si le joueur actuel a gagné
         if (has_won(players[current_player]))
