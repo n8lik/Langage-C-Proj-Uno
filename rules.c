@@ -4,6 +4,10 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
 
 // fonction pour vérifier si une carte peut être posée
 int can_be_played(struct card card, struct card top_card)
@@ -113,8 +117,14 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
 }
 
 // fonction pour gérer le tour d'un joueur (piocher (avec la fonction card draw_card(card *deck, int *nb_cards_drawn) du player.c), jouer, appliquer les effets des cartes spéciales)
-void play_turn(player *players, int nb_players, card *deck, int deck_size, int *nb_cards_drawn, int *current_player, int *direction, int *nb_cards_to_draw, card *top_card, SDL_Surface *screen)
+void play_turn(player *players, int nb_players, card *deck, int deck_size, int *nb_cards_drawn, int *current_player, int *direction, int *nb_cards_to_draw, card *top_card, SDL_Surface *screen,SDL_Surface *bgImage)
 {
+      // Nettoyage de l'écran
+    SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0)); // Choisissez une couleur de fond adéquate
+    SDL_BlitSurface(bgImage, NULL, screen, NULL); // Redessine l'image de fond
+    SDL_Flip(screen); // Applique le nettoyage à l'affichage
+
+
     //Afficher la carte du dessus
     printf("\n\nCarte du dessus : Valeur=%s, Couleur=%s, Type=%s\n", get_card_name(top_card->value), get_color_name(top_card->color), get_type_name(top_card->type));
 
@@ -209,7 +219,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
                 players[*current_player].cards[players[*current_player].nbCards] = draw_card(deck, nb_cards_drawn);
                 players[*current_player].nbCards++;
                 printf("Vous avez pioché une carte.\n");
-                play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen);
+                play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen, bgImage);
             }
             else
             {
@@ -246,7 +256,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
         {
             printf("Vous ne pouvez pas jouer cette carte.\n");
             // rejouer le tour
-            play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen);
+            play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen, bgImage);
         }
     }
     else
