@@ -8,9 +8,11 @@ const char *get_card_name(int value)
     switch (value)
     {
     case 0 ... 9:
+    {
         static char number[2];
         sprintf(number, "%d", value);
         return number;
+    }
     case 10:
         return "+2";
     case 11:

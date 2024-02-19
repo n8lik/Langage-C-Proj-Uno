@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <SDL.h>
-
 #include "card.h"
 #include "player.h"
 #include "rules.h"
