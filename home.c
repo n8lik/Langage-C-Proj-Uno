@@ -221,7 +221,8 @@ int home_page()
                     {
                         //Appeler la fonction anarchie
                         anarchie();
-                    }   
+                    }  
+                    
                 }
                 break;
             }
