@@ -12,6 +12,8 @@
 #include "../home.h"
 #include "multi.h"
 
+
+
 int multi ()
 {
     // Initialisation du jeu avec le nombre de joueurs et leurs nomss
