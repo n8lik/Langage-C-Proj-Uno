@@ -148,6 +148,25 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
 
         SDL_FreeSurface(topCardImage); // Libère la mémoire de l'image chargée une fois affichée
     }
+    //Afficher la pioche juste à côté de la carte du dessus
+    char imagePath2[256]; // Assurez-vous que ce tableau est assez grand
+    sprintf(imagePath2, "assets/cards/pioche.png");
+
+    // Charger l'image de la carte du dessus
+    SDL_Surface *deckImage = IMG_Load(imagePath2);
+    if (!deckImage) {
+        fprintf(stderr, "Impossible de charger l'image de la carte : %s\n", IMG_GetError());
+        // Gérer l'erreur (par exemple, continuer sans crasher)
+    } else {
+        SDL_Rect deckPos;
+        deckPos.x = 700; // Position x où afficher la carte
+        deckPos.y = 300; // Position y où afficher la carte
+
+        SDL_BlitSurface(deckImage, NULL, screen, &deckPos);
+        SDL_Flip(screen); // Met à jour l'écran avec la nouvelle image affichée
+
+        SDL_FreeSurface(deckImage); // Libère la mémoire de l'image chargée une fois affichée
+    }
 
     //Afficher le nom du joueur actuel en SDL
     TTF_Font *font = TTF_OpenFont("assets/DUSTERY.ttf", 24);
@@ -203,10 +222,12 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
         }
     }
 
-    // Demander au joueur quelle carte il veut jouer
+    // Demander au joueur de choisir une carte ou de piocher
+    printf("Veuillez choisir une carte à jouer (1-%d) ou piocher (0) : ", players[*current_player].nbCards);
     int choice;
-    printf("Entrez le numéro de l'action que vous voulez effectuer (0 pour piocher) : ");
     scanf("%d", &choice);
+    
+
 
     if (choice == 0)
     {
