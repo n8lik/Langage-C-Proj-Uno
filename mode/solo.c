@@ -14,11 +14,6 @@
 
 int solo ()
 {
-    // Initialisation du jeu avec le nombre de joueurs et leurs nomss
-    int nb_players = choose_nb_players();
-    player *players = malloc(nb_players * sizeof(player));
-    choose_players_name(players, nb_players);
-
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         fprintf(stderr, "Erreur lors de l'initialisation de SDL : %s\n", SDL_GetError());
