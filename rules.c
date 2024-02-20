@@ -198,29 +198,42 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
         printf("Carte %d : Valeur=%s, Couleur=%s, Type=%s\n", i + 1, get_card_name(players[*current_player].cards[i].value), get_color_name(players[*current_player].cards[i].color), get_type_name(players[*current_player].cards[i].type));
     }
 
-    // Afficher les cartes du joueur avec des images
-    for (int i = 0; i < players[*current_player].nbCards; i++)
-    {
-        // Construire le chemin complet vers l'image de la carte
-        char imagePath[256]; // Assurez-vous que ce tableau est assez grand
-        sprintf(imagePath, "assets/cards/%s", players[*current_player].cards[i].img);
+   // Afficher les cartes du joueur avec des images
+int cardOffsetX = 275; // Position de départ en x
+int cardOffsetY = 450; // Position de départ en y
+int cardsPerRow = 12; // Nombre maximal de cartes par ligne
+int cardSpacingX = 60; // Espacement horizontal entre les cartes
+int cardSpacingY = 100; // Espacement vertical entre les lignes
 
-        // Charger l'image de la carte
-        SDL_Surface *cardImage = IMG_Load(imagePath);
-        if (!cardImage) {
-            fprintf(stderr, "Impossible de charger l'image de la carte : %s\n", IMG_GetError());
-            // Gérer l'erreur (par exemple, continuer sans crasher)
-        } else {
-            SDL_Rect cardPos;
-            cardPos.x = 350 + i * 100; // Position x où afficher la carte
-            cardPos.y = 500; // Position y où afficher la carte
+for (int i = 0; i < players[*current_player].nbCards; i++)
+{
+    // Calculer la position de la carte en fonction de son index
+    int row = i / cardsPerRow;
+    int col = i % cardsPerRow;
+    int xPos = cardOffsetX + col * cardSpacingX;
+    int yPos = cardOffsetY + row * cardSpacingY;
 
-            SDL_BlitSurface(cardImage, NULL, screen, &cardPos);
-            SDL_Flip(screen); // Met à jour l'écran avec la nouvelle image affichée
+    // Construire le chemin complet vers l'image de la carte
+    char imagePath[256];
+    sprintf(imagePath, "assets/cards/%s", players[*current_player].cards[i].img);
 
-            SDL_FreeSurface(cardImage); // Libère la mémoire de l'image chargée une fois affichée
-        }
+    // Charger l'image de la carte
+    SDL_Surface *cardImage = IMG_Load(imagePath);
+    if (!cardImage) {
+        fprintf(stderr, "Impossible de charger l'image de la carte : %s\n", IMG_GetError());
+        // Gérer l'erreur (par exemple, continuer sans crasher)
+    } else {
+        // Afficher la carte à sa position calculée
+        SDL_Rect cardPos;
+        cardPos.x = xPos;
+        cardPos.y = yPos;
+
+        SDL_BlitSurface(cardImage, NULL, screen, &cardPos);
+        SDL_Flip(screen); // Met à jour l'écran avec la nouvelle image affichée
+
+        SDL_FreeSurface(cardImage); // Libère la mémoire de l'image chargée une fois affichée
     }
+}
 
     // Demander au joueur de choisir une carte ou de piocher
     printf("Veuillez choisir une carte à jouer (1-%d) ou piocher (0) : ", players[*current_player].nbCards);
@@ -252,6 +265,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
             printf("Vous avez atteint le nombre maximum de cartes.\n");
         }
     }
+    
 
     else if (choice > 0 && choice <= players[*current_player].nbCards)
     {
