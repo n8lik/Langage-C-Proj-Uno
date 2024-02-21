@@ -7,6 +7,8 @@
 #include "mode/solo.h"
 #include "mode/multi.h"
 #include "mode/anarchie.h"
+#include "rules.h"
+#include "mentions.h"
 
 void drawTriangle(SDL_Surface *screen, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Sint16 x3, Sint16 y3)
 {
@@ -175,6 +177,11 @@ int home_page()
 
     SDL_BlitSurface(shop, NULL, screen, &shoppos);
 
+
+    //Affichage des mentions légales
+    renderText("Mentions legales", 600, 675, screen);
+
+
     // Actualisation de l'écran
     SDL_Flip(screen);
     drawTriangle(screen, 15, 200, 15, 475, 260, 340);
@@ -228,6 +235,14 @@ int home_page()
                     {
                         running = false;
                     }
+
+                    // Vérifier si le clic est sur le bouton "Mentions legales"
+                    if (x >= 600 && x <= 700 && y >= 675 && y <= 700)
+                    {
+                        //Appeler la fonction des mentions légales
+                        display_mentions(screen);
+                    }
+
                     
                 }
                 break;
