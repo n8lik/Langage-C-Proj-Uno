@@ -4,6 +4,7 @@
         "card.h": "c",
         "cstdlib": "c",
         "sdl_image.h": "c",
-        "stdbool.h": "c"
+        "stdbool.h": "c",
+        "typeinfo": "c"
     }
 }
