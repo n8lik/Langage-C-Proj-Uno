@@ -1,6 +1,7 @@
 #include "card.h"
 #include "player.h"
 #include "rules.h"
+#include "home.h"
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_ttf.h>
@@ -493,6 +494,12 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
         cardPos[i][1] = yPos;
     }
 
+    //Afficher le bouton "retour" pour revenir au menu
+    SDL_Rect backButton = {10, 10, 100, 50};
+    SDL_FillRect(screen, &backButton, SDL_MapRGB(screen->format, 255, 0, 0));
+    renderText("Retour", 20, 20, screen);
+    SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
+
     // Récupérer le choix du joueur actuel pour piocher ou jouer une carte en cliquant sur la carte
     int choice = -1;
     int mouseX, mouseY;
@@ -531,6 +538,12 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
                         break;
                     }
                 }
+                // Vérifier si les coordonnées de la souris correspondent au bouton "retour"
+                if (mouseX >= 10 && mouseX <= 10 + 100 && mouseY >= 10 && mouseY <= 10 + 50)
+                {
+                    home_page();
+                }
+
                 break;
             default:
                 break;

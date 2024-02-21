@@ -133,6 +133,7 @@ int multi()
                 {
                     if (event.type == SDL_QUIT)
                     {
+
                         running = false;
                     }
                     if (event.type == SDL_MOUSEBUTTONDOWN)
