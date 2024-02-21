@@ -1,16 +1,20 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #include "card.h"
+
 #include "player.h"
 #include "rules.h"
-#include "home.h"
+#include "shop.h"
+#include "mode/solo.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <SDL.h>
+
+
 
 int main()
 {
     
-    home_page();
-   /* // Initialisation du jeu
+    // Initialisation du jeu
     int nb_players = choose_nb_players();
     player *players = malloc(nb_players * sizeof(player));
     choose_players_name(players, nb_players);
@@ -33,11 +37,16 @@ int main()
 
     distribute_cards(players, deck, nb_players);
     display_cards(players, nb_players);
-
+    
     // Boucle du jeu
     while (1)
     {
-        play_turn(players, nb_players, deck, deck_size, &nb_cards_to_draw, &current_player, &direction, &nb_cards_to_draw, &top_card);
+        
+        if (nb_players == 2 && players[current_player].isAI) {
+            play_ai_turn(&players[current_player], deck, &deck_size, &top_card);
+        } else {
+            play_turn(players, nb_players, deck, deck_size, &nb_cards_to_draw, &current_player, &direction, &nb_cards_to_draw, &top_card);
+        }
 
         // Vérifier si le joueur actuel a gagné
         if (has_won(players[current_player]))
@@ -61,5 +70,5 @@ int main()
     }
     free(players);
 
-    return 0;*/
+    return 0;
 }

@@ -1,6 +1,6 @@
 CC= gcc
-CFLAGS= -O2 -Wall -Wextra -Werror -std=c99
-CLIBS= -lm -lSDL -lSDL_ttf -lSDL_image -lSDL_gfx
+CFLAGS= -O2 -Wall -Wextra -Werror -std=c99 `sdl-config --cflags`
+CLIBS= -lm `sdl-config --libs` -lSDL_ttf -lSDL_image -lSDL_gfx
 EXE= executable
 OBJ= obj/
 SRC_DIR = .

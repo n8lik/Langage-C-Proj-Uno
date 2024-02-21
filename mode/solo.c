@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h> 
 
 // sdl 1.2
 #include <SDL/SDL.h>
@@ -9,15 +10,24 @@
 #include "../card.h"
 #include "../player.h"
 #include "../rules.h"
-#include "../home.h"
 #include "solo.h"
 
 int solo ()
 {
-    // Initialisation du jeu avec le nombre de joueurs et leurs nomss
+    
+    // Choix du nombre de joueurs, y compris les IA
     int nb_players = choose_nb_players();
     player *players = malloc(nb_players * sizeof(player));
-    choose_players_name(players, nb_players);
+    
+    // Initialisation du joueur humain
+    choose_players_name(players, 1); // Peut-être ajuster pour demander seulement le nom du joueur humain
+    players[0].isAI = false; // Le premier joueur n'est pas une IA
+    
+    // Configuration des joueurs IA
+    for (int i = 1; i < nb_players; i++) {
+        players[i].isAI = true; // Marquer comme IA
+    }
+
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -72,3 +82,5 @@ int solo ()
     SDL_Quit();
     return 0;
 }
+
+

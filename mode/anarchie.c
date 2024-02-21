@@ -9,7 +9,6 @@
 #include "../card.h"
 #include "../player.h"
 #include "../rules.h"
-#include "../home.h"
 #include "anarchie.h"
 
 int anarchie ()
