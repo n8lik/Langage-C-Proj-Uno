@@ -12,9 +12,7 @@
 #include "../home.h"
 #include "multi.h"
 
-
-
-int multi ()
+int multi()
 {
     // Initialisation du jeu avec le nombre de joueurs et leurs nomss
     int nb_players = choose_nb_players();
@@ -56,14 +54,13 @@ int multi ()
     SDL_BlitSurface(bgImage, NULL, screen, NULL);
     SDL_Flip(screen);
 
-
-    //Code pour le jeu
-     init_players(players, nb_players);
+    // Code pour le jeu
+    init_players(players, nb_players);
 
     // Déclaration et initialisation des variables
     int current_player = 0; // ou choisir un joueur au hasard
     int direction = 1;      // 1 pour sens horaire, -1 pour sens antihoraire
-    int nb_cards_to_draw = 0;
+    
 
     // Déclaration et initialisation de la variable top_card
     card top_card;
@@ -75,16 +72,16 @@ int multi ()
     display_deck(deck, deck_size);
     shuffle_deck(deck, 108, &top_card);
 
-    //Taille du deck
-
+    // Taille du deck
     distribute_cards(players, deck, nb_players);
+    deck_size -= nb_players * 7; // Subtract the distributed cards
     display_cards(players, nb_players);
 
     // Boucle du jeu
     while (1)
     {
-        play_turn(players, nb_players, deck, deck_size, &nb_cards_to_draw, &current_player, &direction, &nb_cards_to_draw, &top_card, screen, bgImage);
 
+        play_turn(players, nb_players, deck, &deck_size, &players[current_player], &direction, &top_card, screen, bgImage);
         // Vérifier si le joueur actuel a gagné
         if (has_won(players[current_player]))
         {
@@ -108,8 +105,6 @@ int multi ()
     free(players);
 
     return 0;
-
-
 
     SDL_Event event;
     bool running = true;
