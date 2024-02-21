@@ -8,6 +8,37 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+//Fontion pour afficher le texte
+void renderText(const char *text, int x, int y, SDL_Surface *screen) {
+    TTF_Font *font = TTF_OpenFont("assets/DUSTERY.ttf", 24);
+    if (font == NULL) {
+        fprintf(stderr, "Erreur lors du chargement de la police : %s\n", TTF_GetError());
+        return; // Quitte la fonction en cas d'erreur
+    }
+
+    // Définit la couleur du texte
+    SDL_Color textColor = {255, 255, 255, 0}; // Blanc avec opacité complète
+
+    // Rend le texte dans une surface SDL
+    SDL_Surface *textSurface = TTF_RenderText_Solid(font, text, textColor);
+    if (textSurface == NULL) {
+        fprintf(stderr, "Erreur lors du rendu du texte : %s\n", TTF_GetError());
+        TTF_CloseFont(font); // Assurez-vous de fermer la police même en cas d'erreur
+        return; // Quitte la fonction en cas d'erreur
+    }
+
+    // Prépare le rectangle pour positionner le texte
+    SDL_Rect textPos = {x, y, 0, 0};
+
+    // Blit le texte sur la surface de l'écran
+    SDL_BlitSurface(textSurface, NULL, screen, &textPos);
+
+    // Libère les ressources
+    TTF_CloseFont(font); // Ferme la police après utilisation
+    SDL_FreeSurface(textSurface); // Libère la surface de texte
+}
+
+
 
 // fonction pour vérifier si une carte peut être posée
 int can_be_played(struct card card, struct card top_card)
@@ -55,7 +86,7 @@ Color choose_color()
     return color;
 }
 // fonction pour appliquer les effets des cartes spéciales
-void apply_special_card_effect(struct card card, struct player *players, int nb_players, int *current_player, int *direction, int *nb_cards_to_draw, struct card *top_card, struct card *deck, int deck_size)
+void apply_special_card_effect(struct card card, struct player *players, int nb_players, int *current_player, int *direction, int *nb_cards_to_draw, struct card *top_card, struct card *deck, int deck_size, SDL_Surface *screen, SDL_Surface *bgImage)
 {
     struct player previous_player; // Pour stocker le joueur précédent
     int next_player = (*current_player + *direction + nb_players) % nb_players;
@@ -73,6 +104,11 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
         {
             printf("Le joueur %s a atteint le nombre maximum de cartes ou le deck est vide.\n", players[next_player].name);
         }
+        //Afficher à l'écran "Le joueur suivant a pioché 2 cartes"
+        renderText("Le joueur suivant pioche 2 cartes", 500, 410, screen);
+        SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
+        //Attendre 1 seconde
+        SDL_Delay(1000);
 
         *current_player = next_player;
         *nb_cards_to_draw = 0;
@@ -80,6 +116,11 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
         break;
     case sens:
         *direction *= -1;
+        // Afficher à l'écran "Le sens du jeu a changé"
+        renderText("Le sens du jeu a change", 500, 410, screen);
+        SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
+        // Attendre 1 seconde
+        SDL_Delay(1000);
         break;
     case pass:
         // Stocker le joueur précédent
@@ -91,6 +132,11 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
         // Réaffecter les cartes du joueur précédent au joueur actuel
         players[*current_player].cards = previous_player.cards;
         players[*current_player].nbCards = previous_player.nbCards;
+        // Afficher à l'écran "Le joueur suivant ne peut pas jouer"
+        renderText("Le joueur suivant ne peut pas jouer", 500, 410, screen);
+        SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
+        // Attendre 1 seconde
+        SDL_Delay(1000);
         break;
     case joker:
         top_card->color = choose_color();
@@ -166,26 +212,9 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
     }
 
     //####################################Afficher le nom du joueur actuel ############################################
-    TTF_Font *font = TTF_OpenFont("assets/DUSTERY.ttf", 24);
-    if (font == NULL)
-    {
-        fprintf(stderr, "Erreur lors du chargement de la police : %s\n", TTF_GetError());
-        // Gérer l'erreur (par exemple, continuer sans crasher)
-    }
-    SDL_Color textColor = {255, 255, 255,0};
-    SDL_Surface *text = TTF_RenderText_Solid(font, players[*current_player].name, textColor);
-    if (text == NULL)
-    {
-        fprintf(stderr, "Erreur lors du rendu du texte : %s\n", TTF_GetError());
-        // Gérer l'erreur (par exemple, continuer sans crasher)
-    }
-    SDL_Rect textPos;
-    textPos.x = 500; // Position x où afficher le texte
-    textPos.y = 50; // Position y où afficher le texte
-    SDL_BlitSurface(text, NULL, screen, &textPos);
+    renderText("C'est au tour de", 400, 50, screen);
+    renderText(players[*current_player].name, 600, 50, screen);
     SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
-    TTF_CloseFont(font); // Libère la mémoire de la police une fois utilisée
-    SDL_FreeSurface(text); // Libère la mémoire du texte une fois affiché
 
 
     //####################################Afficher les cartes du joueur actuel ############################################
@@ -250,7 +279,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
                 // Vérifier si les coordonnées de la souris correspondent à une carte
                 for (int i = 0; i < players[*current_player].nbCards; i++)
                 {
-                    if (mouseX >= cardPos[i][0] && mouseX <= cardPos[i][0] + 100 && mouseY >= cardPos[i][1] && mouseY <= cardPos[i][1] + 150)
+                    if (mouseX >= cardPos[i][0] && mouseX <= cardPos[i][0] + 100 && mouseY >= cardPos[i][1] && mouseY <= cardPos[i][1] + 100)
                     {
                         choice = i+1;
                         break;
@@ -279,17 +308,26 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
             {
                 players[*current_player].cards[players[*current_player].nbCards] = draw_card(deck, nb_cards_drawn);
                 players[*current_player].nbCards++;
-                printf("Vous avez pioché une carte.\n");
+                //Afficher à l'écran "vous avez pioché une carte"
+                renderText("Vous avez pioche une carte", 500, 410, screen);
+                SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
+                //Attendre 1 seconde
+                SDL_Delay(1000);
+                //Rejouer le tour
                 play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen, bgImage);
             }
             else
             {
-                printf("Il n'y a plus de cartes à piocher.\n");
+                //Afficher à l'écran "La piolche est vide"
+                renderText("La pioche est vide", 500, 410, screen);
+                SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
             }
         }
         else
         {
-            printf("Vous avez atteint le nombre maximum de cartes.\n");
+            //Afficher à l'écran "Vous avez atteint le nombre maximum de cartes"
+            renderText("Vous avez atteint le nombre maximum de cartes", 500, 410, screen);
+            SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
         }
     }
     
@@ -302,7 +340,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
         if (can_be_played(players[*current_player].cards[card_index], *top_card))
         {
             // Appliquer les effets de la carte
-            apply_special_card_effect(players[*current_player].cards[card_index], players, nb_players, current_player, direction, nb_cards_to_draw, top_card, deck, deck_size);
+            apply_special_card_effect(players[*current_player].cards[card_index], players, nb_players, current_player, direction, nb_cards_to_draw, top_card, deck, deck_size, screen, bgImage);
 
             // Mettre la carte sur le dessus de la pile
             *top_card = players[*current_player].cards[card_index];
@@ -316,7 +354,11 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
         }
         else
         {
-            printf("Vous ne pouvez pas jouer cette carte.\n");
+            //Afficher à l'écran "Vous ne pouvez pas jouer cette carte"
+            renderText("Vous ne pouvez pas jouer cette carte", 500, 410, screen);
+            SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
+            //Attendre 1 seconde
+            SDL_Delay(1000);
             // rejouer le tour
             play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen, bgImage);
         }
