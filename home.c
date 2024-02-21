@@ -222,6 +222,12 @@ int home_page()
                         //Appeler la fonction anarchie
                         anarchie();
                     }  
+
+                    // Vérifier si le clic est sur le bouton "QUITTER"
+                    if (x >= x_position4 && x <= x_position4 + textSurfacequitter->w && y >= y_position4 && y <= y_position4 + textSurfacequitter->h)
+                    {
+                        running = false;
+                    }
                     
                 }
                 break;

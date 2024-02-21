@@ -76,8 +76,20 @@ void renderOpponentCards(player *players, int nb_players, int current_player, SD
     }
 }
 
-
-
+//fonction pour afficher le nom et le nombre de cartes de l'adversaire
+void renderOpponentsCards(player *players, int nb_players, int current_player, SDL_Surface *screen)
+{
+    //Afficher le nom et le nombre de cartes de l'adversaire les uns en dessous des autres
+    for (int i = 0; i < nb_players; i++)
+    {
+        if (i != current_player)
+        {
+            char text[50];
+            sprintf(text, "%s : %d cartes", players[i].name, players[i].nbCards);
+            renderText(text, 600, 150 + i * 50, screen);
+        }
+    }
+}
 
 // fonction pour vérifier si une carte peut être posée
 int can_be_played(struct card card, struct card top_card)
@@ -286,9 +298,16 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
     SDL_Flip(screen); // Applique le nettoyage à l'affichage
 
     //####################################Afficher les cartes de l'adversaire ############################################
-    renderOpponentCards(players, nb_players, *current_player, screen);
-    SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
-
+    //Si l n'y a que 2 joueurs
+    if (nb_players == 2)
+    {
+        renderOpponentCards(players, nb_players, *current_player, screen);
+    }
+    else
+    {
+        //Si il y a plus de 2 joueurs
+        renderOpponentsCards(players, nb_players, *current_player, screen);
+    }
 
 
     //####################################Afficher la carte du dessus de la pile ############################################
@@ -346,13 +365,42 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
     //Tableau pour stocker la position des cartes du joueur actuel pour les afficher
     int cardPos[players[*current_player].nbCards][2];
 
-    for (int i = 0; i < players[*current_player].nbCards; i++)
+    //Enregistrer la position de la première carte
+    cardPos[0][0] = cardOffsetX;
+    cardPos[0][1] = cardOffsetY; 
+    
+    // Construire le chemin complet vers l'image de la carte
+    char imagePath3[256];
+    sprintf(imagePath3, "assets/cards/%s", players[*current_player].cards[0].img);
+
+    // Charger l'image de la carte
+    SDL_Surface *cardImage3 = IMG_Load(imagePath3);
+    if (!cardImage3) {
+        fprintf(stderr, "Impossible de charger l'image de la carte : %s\n", IMG_GetError());
+        // Gérer l'erreur (par exemple, continuer sans crasher)
+    } else {
+        // Afficher la carte à sa position calculée
+        SDL_Rect cardPos3;
+        cardPos3.x = cardOffsetX;
+        cardPos3.y = cardOffsetY;
+
+        SDL_BlitSurface(cardImage3, NULL, screen, &cardPos3);
+        SDL_Flip(screen); // Met à jour l'écran avec la nouvelle image affichée
+
+        SDL_FreeSurface(cardImage3); // Libère la mémoire de l'image chargée une fois affichée
+    }
+    for (int i = 1; i < players[*current_player].nbCards; i++)
     {
+
         // Calculer la position de la carte en fonction de son index
         int row = i / cardsPerRow;
         int col = i % cardsPerRow;
         int xPos = cardOffsetX + col * cardSpacingX;
         int yPos = cardOffsetY + row * cardSpacingY;
+
+        //Stockage des coordonnées des cartes
+        cardPos[i][0] = xPos;
+        cardPos[i][1] = yPos;
 
         // Construire le chemin complet vers l'image de la carte
         char imagePath[256];
@@ -375,9 +423,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
             SDL_FreeSurface(cardImage); // Libère la mémoire de l'image chargée une fois affichée
         }
 
-        // Stocker la position de la carte pour pouvoir la retrouver plus tard
-        cardPos[i][0] = xPos;
-        cardPos[i][1] = yPos;
+       
     }
 
     //Récupérer le choix du joueur actuel pour piocher ou jouer une carte en cliquant sur la carte
@@ -391,7 +437,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
             switch (event.type)
             {
             case SDL_QUIT:
-                // Gérer la fermeture de la fenêtre
+                exit(0);
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 // Récupérer les coordonnées de la souris
@@ -399,6 +445,8 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
                 // Vérifier si les coordonnées de la souris correspondent à une carte
                 for (int i = 0; i < players[*current_player].nbCards; i++)
                 {
+                
+                    // Vérifier si les coordonnées de la souris correspondent à u
                     if (mouseX >= cardPos[i][0] && mouseX <= cardPos[i][0] + 100 && mouseY >= cardPos[i][1] && mouseY <= cardPos[i][1] + 100)
                     {
                         choice = i+1;
@@ -408,7 +456,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
                     // Vérifier si les coordonnées de la souris correspondent à la pioche
                     if (mouseX >= 700 && mouseX <= 700 + 100 && mouseY >= 300 && mouseY <= 300 + 150)
                     {
-                        choice = 0;
+                        choice = -2;
                         break;
                     }
                 }
@@ -418,7 +466,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
             }
         }
     }
-    if (choice == 0)
+    if (choice == -2)
     {
         // Piocher une carte
         if (players[*current_player].nbCards < MAX_CARDS_PER_PLAYER)
