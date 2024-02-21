@@ -74,9 +74,6 @@ void renderOpponentCards(player *players, int nb_players, int current_player, SD
             cardOffsetX += 200; // Espacement horizontal entre les cartes
         }
     }
-
-
-
 }
 
 
