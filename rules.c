@@ -38,6 +38,48 @@ void renderText(const char *text, int x, int y, SDL_Surface *screen) {
     SDL_FreeSurface(textSurface); // Libère la surface de texte
 }
 
+//fonction pour afficher les cartes de l'adversaire
+void renderOpponentCards(player *players, int nb_players, int current_player, SDL_Surface *screen)
+{
+    for (int i = 0; i < nb_players; i++)
+    {
+        if (i != current_player)
+        {
+            int cardOffsetX = 275; // Position de départ en x pour le premier adversaire
+            int cardOffsetY = 150; // Position de départ en y pour le premier adversaire
+            //Afficher le nom de l'adversaire
+            renderText(players[i].name, 600, cardOffsetY -30, screen);
+            //Afficher l'arriere de ses cartes
+            char imagePath[256];
+            sprintf(imagePath, "assets/cards/pioche.png");
+            SDL_Surface *cardImage = IMG_Load(imagePath);
+            if (!cardImage)
+            {
+                fprintf(stderr, "Impossible de charger l'image de la carte : %s\n", IMG_GetError());
+                // Gérer l'erreur (par exemple, continuer sans crasher)
+            }
+            else
+            {
+                //Faire une boucle pour afficher les cartes de l'adversaire
+                for (int j = 0; j < players[i].nbCards; j++)
+                {
+                    SDL_Rect cardPos;
+                    cardPos.x = cardOffsetX + j * 20; // Position x où afficher la carte
+                    cardPos.y = cardOffsetY;          // Position y où afficher la carte
+                    SDL_BlitSurface(cardImage, NULL, screen, &cardPos);
+                    SDL_Flip(screen); // Met à jour l'écran avec la nouvelle image affichée
+                }
+                SDL_FreeSurface(cardImage); // Libère la mémoire de l'image chargée une fois affichée
+            }
+            cardOffsetX += 200; // Espacement horizontal entre les cartes
+        }
+    }
+
+
+
+}
+
+
 
 
 // fonction pour vérifier si une carte peut être posée
@@ -69,22 +111,67 @@ int has_won(player player)
 }
 
 // fonction du choix de la couleur
-Color choose_color()
-{
-    int color;
-    printf("Choisissez une couleur :\n");
-    printf("1. Jaune\n");
-    printf("2. Rouge\n");
-    printf("3. Bleu\n");
-    printf("4. Vert\n");
-    scanf("%d", &color);
-    while (color < 1 || color > 4)
-    {
-        printf("Erreur, veuillez choisir une couleur entre 1 et 4 : ");
-        scanf("%d", &color);
+int choose_color(SDL_Surface *screen) {
+    // Affiche les instructions pour choisir une couleur
+    renderText("Choisissez une couleur :", 400, 410, screen);
+
+    // Définit les rectangles pour les boutons de couleur (x, y, largeur, hauteur)
+    SDL_Rect yellowButton = {650, 410, 20, 20};
+    SDL_Rect redButton = {700, 410, 20, 20};
+    SDL_Rect blueButton = {750, 410, 20, 20};
+    SDL_Rect greenButton = {800, 410, 20, 20};
+
+    // Définit les couleurs pour les boutons
+    Uint32 yellow = SDL_MapRGB(screen->format, 255, 255, 0);
+    Uint32 red = SDL_MapRGB(screen->format, 255, 0, 0);
+    Uint32 blue = SDL_MapRGB(screen->format, 0, 0, 255);
+    Uint32 green = SDL_MapRGB(screen->format, 0, 255, 0);
+
+    // Dessine les boutons sur l'écran
+    SDL_FillRect(screen, &yellowButton, yellow);
+    SDL_FillRect(screen, &redButton, red);
+    SDL_FillRect(screen, &blueButton, blue);
+    SDL_FillRect(screen, &greenButton, green);
+
+    SDL_Flip(screen); // Met à jour l'écran
+
+    bool chosen = false;
+    int colorChoice = 1; // Valeur par défaut pour Jaune
+
+    while (!chosen) {
+        SDL_Event event;
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                exit(0); // Quitte directement, pourrait être géré plus subtilement
+            }
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                int x = event.button.x;
+                int y = event.button.y;
+
+                // Vérifie si le clic est sur l'un des boutons de couleur
+                if (x >= yellowButton.x && x <= yellowButton.x + yellowButton.w &&
+                    y >= yellowButton.y && y <= yellowButton.y + yellowButton.h) {
+                    colorChoice = 1; // Jaune
+                    chosen = true;
+                } else if (x >= redButton.x && x <= redButton.x + redButton.w &&
+                           y >= redButton.y && y <= redButton.y + redButton.h) {
+                    colorChoice = 2; // Rouge
+                    chosen = true;
+                } else if (x >= blueButton.x && x <= blueButton.x + blueButton.w &&
+                           y >= blueButton.y && y <= blueButton.y + blueButton.h) {
+                    colorChoice = 3; // Bleu
+                    chosen = true;
+                } else if (x >= greenButton.x && x <= greenButton.x + greenButton.w &&
+                           y >= greenButton.y && y <= greenButton.y + greenButton.h) {
+                    colorChoice = 4; // Vert
+                    chosen = true;
+                }
+            }
+        }
     }
-    return color;
+    return colorChoice;
 }
+
 // fonction pour appliquer les effets des cartes spéciales
 void apply_special_card_effect(struct card card, struct player *players, int nb_players, int *current_player, int *direction, int *nb_cards_to_draw, struct card *top_card, struct card *deck, int deck_size, SDL_Surface *screen, SDL_Surface *bgImage)
 {
@@ -108,7 +195,7 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
         renderText("Le joueur suivant pioche 2 cartes", 500, 410, screen);
         SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
         //Attendre 1 seconde
-        SDL_Delay(1000);
+        SDL_Delay(500);
 
         *current_player = next_player;
         *nb_cards_to_draw = 0;
@@ -120,7 +207,7 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
         renderText("Le sens du jeu a change", 500, 410, screen);
         SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
         // Attendre 1 seconde
-        SDL_Delay(1000);
+        SDL_Delay(500);
         break;
     case pass:
         // Stocker le joueur précédent
@@ -136,10 +223,41 @@ void apply_special_card_effect(struct card card, struct player *players, int nb_
         renderText("Le joueur suivant ne peut pas jouer", 500, 410, screen);
         SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
         // Attendre 1 seconde
-        SDL_Delay(1000);
+        SDL_Delay(500);
         break;
     case joker:
-        top_card->color = choose_color();
+        top_card->color = choose_color(screen);
+        //Afficher la coueleur de la top_card
+        //Transforme la couleur en chaine de caractère
+        char color[10];
+        switch (top_card->color)
+        {
+        case 1:
+            strcpy(color, "Jaune");
+            break;
+        case 2:
+            strcpy(color, "Rouge");
+            break;
+        case 3:
+            strcpy(color, "Bleu");
+            break;
+        case 4:
+            strcpy(color, "Vert");
+            break;
+        default:
+            break;
+        }
+        //Nettoyer l'écran
+        SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0)); // Choisissez une couleur de fond adéquate
+        SDL_BlitSurface(bgImage, NULL, screen, NULL); // Redessine l'image de fond
+        SDL_Flip(screen); // Applique le nettoyage à l'affichage
+        //Afficher la couleur choisie
+        renderText("La couleur choisie est", 400, 410, screen);
+        renderText(color, 700, 410, screen);
+        SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
+        // Attendre 1 seconde
+        SDL_Delay(500);
+        
         break;
     case quatre:
         *nb_cards_to_draw += 4;
@@ -169,6 +287,11 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
     SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0)); // Choisissez une couleur de fond adéquate
     SDL_BlitSurface(bgImage, NULL, screen, NULL); // Redessine l'image de fond
     SDL_Flip(screen); // Applique le nettoyage à l'affichage
+
+    //####################################Afficher les cartes de l'adversaire ############################################
+    renderOpponentCards(players, nb_players, *current_player, screen);
+    SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
+
 
 
     //####################################Afficher la carte du dessus de la pile ############################################
@@ -312,7 +435,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
                 renderText("Vous avez pioche une carte", 500, 410, screen);
                 SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
                 //Attendre 1 seconde
-                SDL_Delay(1000);
+                SDL_Delay(500);
                 //Rejouer le tour
                 play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen, bgImage);
             }
@@ -358,7 +481,7 @@ void play_turn(player *players, int nb_players, card *deck, int deck_size, int *
             renderText("Vous ne pouvez pas jouer cette carte", 500, 410, screen);
             SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
             //Attendre 1 seconde
-            SDL_Delay(1000);
+            SDL_Delay(500);
             // rejouer le tour
             play_turn(players, nb_players, deck, deck_size, nb_cards_drawn, current_player, direction, nb_cards_to_draw, top_card,screen, bgImage);
         }
