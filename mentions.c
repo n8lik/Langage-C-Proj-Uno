@@ -46,13 +46,35 @@ void display_mentions(SDL_Surface *screen)
     textPosition.x = 600;
     textPosition.y = 50;
     SDL_BlitSurface(text, NULL, screen, &textPosition);
-    
-    //Faire un bouton qui renvoie au menu
-    SDL_Surface *textSurface = TTF_RenderText_Blended(font, "Retour au menu", textColor);
+
+    //Affichage des mentions légales en un seul bloc
+    SDL_Surface *textSurface = TTF_RenderText_Blended(font, "Ce jeu a été réalisé par des étudiants de l'ESGI dans le cadre d'un projet de programmation en C.", textColor);
     SDL_Rect textPosition2;
     textPosition2.x = 40;
-    textPosition2.y = 40;
+    textPosition2.y = 150;
     SDL_BlitSurface(textSurface, NULL, screen, &textPosition2);
+
+    //Affichage des mentions légales en un seul bloc
+    SDL_Surface *textSurface2 = TTF_RenderText_Blended(font, "Il n'est pas libre de droit et ne peut être vendu. Il est destiné à un usage personnel.", textColor);
+    SDL_Rect textPosition3;
+    textPosition3.x = 40;
+    textPosition3.y = 200;
+    SDL_BlitSurface(textSurface2, NULL, screen, &textPosition3);
+
+    //Affichage des mentions légales en un seul bloc
+    SDL_Surface *textSurface3 = TTF_RenderText_Blended(font, "Pour toute question ou réclamation, veuillez contacter l'adresse suivante : 123@gmail.com", textColor);
+    SDL_Rect textPosition4;
+    textPosition4.x = 40;
+    textPosition4.y = 250;
+    SDL_BlitSurface(textSurface3, NULL, screen, &textPosition4);
+    
+    //Faire un bouton qui renvoie au menu position 40 40
+    SDL_Surface *textSurface4 = TTF_RenderText_Blended(font, "Retour au menu", textColor);
+    SDL_Rect textPosition5;
+    textPosition5.x = 40;
+    textPosition5.y = 40;
+    SDL_BlitSurface(textSurface4, NULL, screen, &textPosition5);
+    
 
     //Rafraîchissement de l'écran
     SDL_Flip(screen);

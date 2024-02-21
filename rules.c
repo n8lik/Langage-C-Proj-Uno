@@ -332,8 +332,6 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
 
     // ####################################Afficher les cartes de l'adversaire ############################################
     int current_player_index = current_player - players; // Calcule l'indice basé sur l'arithmétique des pointeurs
-
-     //####################################Afficher les cartes de l'adversaire ############################################
     //Si l n'y a que 2 joueurs
     if (nb_players == 2)
     {
@@ -458,7 +456,7 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
         SDL_FreeSurface(cardImage3); // Libère la mémoire de l'image chargée une fois affichée
     }
 
-    for (int i = 1; i < current_player->nbCards; i++)
+    for (int i = 0; i < current_player->nbCards; i++)
     {
         // Calculer la position de la carte en fonction de son index
         int row = i / cardsPerRow;
@@ -506,7 +504,7 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
             switch (event.type)
             {
             case SDL_QUIT:
-                // Gérer la fermeture de la fenêtre
+                exit(0);
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 // Récupérer les coordonnées de la souris
@@ -514,6 +512,12 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
                 // Vérifier si les coordonnées de la souris correspondent à une carte
                 for (int i = 0; i < current_player->nbCards; i++)
                 {
+                    //Si les coordonnées de la souris correspondent à la première carte, alors le choix est 0
+                    if (mouseX >= cardPos[0][0] && mouseX <= cardPos[0][0] + 40 && mouseY >= cardPos[0][1] && mouseY <= cardPos[0][1] + 100)
+                    {
+                        choice = 0;
+                        break;
+                    }
                     if (mouseX >= cardPos[i][0] && mouseX <= cardPos[i][0] + 100 && mouseY >= cardPos[i][1] && mouseY <= cardPos[i][1] + 100)
                     {
                         choice = i + 1;
@@ -566,7 +570,7 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
         }
     }
 
-    else if (choice > 0 && choice <= current_player->nbCards)
+    else if (choice >= 0 && choice <= current_player->nbCards)
     {
         // Jouer une carte
         int card_index = choice;
@@ -603,7 +607,7 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
 }
 
 // Fonction pour calculer les scores et les garder dans un fichier nommé score.txt
-void calculate_scores(player *players, int nb_players)
+void calculate_scores()
 {
     FILE *score_file = fopen("result/score.txt", "w");
     if (score_file == NULL)
@@ -612,16 +616,15 @@ void calculate_scores(player *players, int nb_players)
         exit(1);
     }
 
-    for (int i = 0; i < nb_players; i++)
-    {
-        int score = 0;
-        for (int j = 0; j < players[i].nbCards; j++)
-        {
-            score += players[i].cards[j].value;
-        }
-        players[i].score += score;
-        fprintf(score_file, "%s : %d\n", players[i].name, players[i].score);
-    }
+    // Récuperer dans le fichier score.txt le numéro derrière lachaine de caractère "point boutique = " 
+    // et le stocker dans une variable score
+    int score;
+    fscanf(score_file, "point boutique = %d", &score);
+    // Ajouter 5 au score
+    score = score + 5;
+    // Ecrire le nouveau score dans le fichier score.txt
+    fprintf(score_file, "point boutique = %d", score);
+
 
     fclose(score_file);
 }

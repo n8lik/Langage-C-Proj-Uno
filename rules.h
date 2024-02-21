@@ -21,7 +21,7 @@ void renderOpponentCards(player *players, int nb_players, int current_player, SD
 void apply_special_card_effect(struct card card, player *players,  int nb_players , int current_player, int *direction, struct card *top_card, SDL_Surface *screen, SDL_Surface *bgImage);
 void play_turn(player *players, int nb_players, card *deck, int *deck_size, player *current_player, int *direction, card *top_card, SDL_Surface *screen, SDL_Surface *bgImage);
 void renderText(const char *text, int x, int y, SDL_Surface *screen) ;
-void calculate_scores(player *players, int nb_players);
+void calculate_scores();
 
 
 
