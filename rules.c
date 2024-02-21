@@ -79,6 +79,21 @@ void renderOpponentCards(player *players, int nb_players, int current_player, SD
     }
 }
 
+//fonction pour afficher le nom et le nombre de cartes de l'adversaire
+void renderOpponentsCards(player *players, int nb_players, int current_player, SDL_Surface *screen)
+{
+    //Afficher le nom et le nombre de cartes de l'adversaire les uns en dessous des autres
+    for (int i = 0; i < nb_players; i++)
+    {
+        if (i != current_player)
+        {
+            char text[50];
+            sprintf(text, "%s : %d cartes", players[i].name, players[i].nbCards);
+            renderText(text, 600, 150 + i * 50, screen);
+        }
+    }
+}
+
 // fonction pour vérifier si une carte peut être posée
 int can_be_played(struct card card, struct card top_card)
 {
@@ -311,10 +326,24 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
     SDL_BlitSurface(bgImage, NULL, screen, NULL);                    // Redessine l'image de fond
     SDL_Flip(screen);                                                // Applique le nettoyage à l'affichage
 
+
+
+
+
     // ####################################Afficher les cartes de l'adversaire ############################################
     int current_player_index = current_player - players; // Calcule l'indice basé sur l'arithmétique des pointeurs
 
-    renderOpponentCards(players, nb_players, current_player_index, screen);
+     //####################################Afficher les cartes de l'adversaire ############################################
+    //Si l n'y a que 2 joueurs
+    if (nb_players == 2)
+    {
+        renderOpponentCards(players, nb_players, current_player_index, screen);
+    }
+    else
+    {
+        //Si il y a plus de 2 joueurs
+        renderOpponentsCards(players, nb_players, current_player_index, screen);
+    }
     SDL_Flip(screen); // Met à jour l'écran avec le nouveau texte affiché
 
     if (current_player->pass == 1)
@@ -404,7 +433,32 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
     // Tableau pour stocker la position des cartes du joueur du tour
     int cardPos[MAX_CARDS_PER_PLAYER][2];
 
-    for (int i = 0; i < current_player->nbCards; i++)
+      //Enregistrer la position de la première carte
+    cardPos[0][0] = cardOffsetX;
+    cardPos[0][1] = cardOffsetY; 
+    
+    // Construire le chemin complet vers l'image de la carte
+    char imagePath3[256];
+    sprintf(imagePath, "assets/cards/%s", current_player->cards[0].img);
+
+    // Charger l'image de la carte
+    SDL_Surface *cardImage3 = IMG_Load(imagePath3);
+    if (!cardImage3) {
+        fprintf(stderr, "Impossible de charger l'image de la carte : %s\n", IMG_GetError());
+        // Gérer l'erreur (par exemple, continuer sans crasher)
+    } else {
+        // Afficher la carte à sa position calculée
+        SDL_Rect cardPos3;
+        cardPos3.x = cardOffsetX;
+        cardPos3.y = cardOffsetY;
+
+        SDL_BlitSurface(cardImage3, NULL, screen, &cardPos3);
+        SDL_Flip(screen); // Met à jour l'écran avec la nouvelle image affichée
+
+        SDL_FreeSurface(cardImage3); // Libère la mémoire de l'image chargée une fois affichée
+    }
+
+    for (int i = 1; i < current_player->nbCards; i++)
     {
         // Calculer la position de la carte en fonction de son index
         int row = i / cardsPerRow;
@@ -469,7 +523,7 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
                     // Vérifier si les coordonnées de la souris correspondent à la pioche
                     if (mouseX >= 700 && mouseX <= 700 + 100 && mouseY >= 300 && mouseY <= 300 + 150)
                     {
-                        choice = 0;
+                        choice = -2;
                         break;
                     }
                 }
@@ -479,7 +533,7 @@ void play_turn(struct player *players, int nb_players, card *deck, int *deck_siz
             }
         }
     }
-    if (choice == 0)
+    if (choice == -2)
     {
         // Piocher une carte
         if (current_player->nbCards < MAX_CARDS_PER_PLAYER)

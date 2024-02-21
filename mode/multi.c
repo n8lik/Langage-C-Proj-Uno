@@ -85,8 +85,12 @@ int multi()
         // Vérifier si le joueur actuel a gagné
         if (has_won(players[current_player]))
         {
-            printf("%s a gagné!\n", players[current_player].name);
+            // Afficher le message de victoire en SDL et proposer de rejouer ou retourner au menu
+            renderText(screen, "Victoire du joueur ", 50, 50);
+            renderText(screen, players[current_player].name, 50, 100);
+            SDL_Flip(screen);
             break;
+
         }
 
         // Passer au joueur suivant
